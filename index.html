@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>gregnpasta</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&display=swap');
+
+  :root{
+    --cream:#FBF6EE;
+    --paper:#FFFDF8;
+    --cream-deep:#F2E9D8;
+    --tomato:#D6492E;
+    --tomato-dark:#B5391F;
+    --basil:#4F6240;
+    --mustard:#E8A33D;
+    --charcoal:#2B2522;
+    --line:#E0D3BE;
+    --muted:#9A8C78;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    background:var(--cream);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(43,37,34,0.04) 1px, transparent 0);
+    background-size: 22px 22px;
+    color:var(--charcoal);
+    font-family:'Karla', sans-serif;
+    min-height:100vh;
+    padding:32px 20px 80px;
+  }
+
+  .wrap{
+    max-width:980px;
+    margin:0 auto;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    text-align:center;
+    margin-bottom:42px;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:64px; height:64px;
+    border-radius:50%;
+    background:var(--tomato);
+    color:var(--paper);
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:24px;
+    margin-bottom:14px;
+    box-shadow: 0 4px 0 var(--tomato-dark);
+    transform: rotate(-6deg);
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(2.4rem, 6vw, 3.6rem);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+
+  h1 span{
+    color:var(--tomato);
+    font-style:italic;
+  }
+
+  .tagline{
+    font-size:1.05rem;
+    color:var(--muted);
+    margin-top:10px;
+    font-weight:500;
+  }
+
+  /* ---------- Step grid ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+    margin-bottom:24px;
+  }
+
+  @media (max-width:760px){
+    .grid{ grid-template-columns:1fr; }
+  }
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px;
+    position:relative;
+    box-shadow: 0 2px 0 rgba(43,37,34,0.03);
+  }
+
+  .step-label{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:6px;
+  }
+
+  .step-num{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:2rem;
+    color:var(--cream-deep);
+    -webkit-text-stroke: 1.5px var(--charcoal);
+    line-height:1;
+  }
+
+  .step-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.25rem;
+  }
+
+  .step-sub{
+    color:var(--muted);
+    font-size:0.92rem;
+    margin:0 0 16px;
+    line-height:1.4;
+  }
+
+  /* ---------- Dropzone ---------- */
+  .dropzone{
+    border:2px dashed var(--line);
+    border-radius:14px;
+    min-height:220px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    cursor:pointer;
+    transition: border-color .15s ease, background .15s ease;
+    padding:16px;
+    background:var(--cream);
+    overflow:hidden;
+    position:relative;
+  }
+
+  .dropzone:hover, .dropzone.drag{
+    border-color:var(--tomato);
+    background:#FBEFE9;
+  }
+
+  .dropzone.has-image{
+    padding:0;
+    border-style:solid;
+  }
+
+  .dropzone img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    display:block;
+  }
+
+  .dz-icon{
+    width:40px; height:40px;
+    margin-bottom:10px;
+    color:var(--muted);
+  }
+
+  .dz-text{
+    color:var(--muted);
+    font-size:0.92rem;
+    font-weight:500;
+  }
+
+  .dz-text strong{
+    color:var(--charcoal);
+  }
+
+  .dz-remove{
+    position:absolute;
+    top:10px; right:10px;
+    background:rgba(43,37,34,0.65);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    width:30px; height:30px;
+    font-size:16px;
+    cursor:pointer;
+    line-height:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .dz-remove:hover{ background:var(--tomato); }
+
+  input[type=file]{ display:none; }
+
+  /* ---------- Action button ---------- */
+  .action-row{
+    display:flex;
+    justify-content:center;
+    margin: 8px 0 36px;
+  }
+
+  .cook-btn{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.1rem;
+    color:var(--paper);
+    background:var(--tomato);
+    border:none;
+    border-radius:999px;
+    padding:16px 38px;
+    cursor:pointer;
+    box-shadow: 0 4px 0 var(--tomato-dark);
+    transition: transform .08s ease, box-shadow .08s ease;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .cook-btn:hover:not(:disabled){
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 var(--tomato-dark);
+  }
+
+  .cook-btn:active:not(:disabled){
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--tomato-dark);
+  }
+
+  .cook-btn:disabled{
+    opacity:0.65;
+    cursor:default;
+  }
+
+  .spinner{
+    width:18px; height:18px;
+    border:2.5px solid rgba(255,255,255,0.4);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation: spin 0.7s linear infinite;
+    display:none;
+  }
+
+  .cook-btn.loading .spinner{ display:inline-block; }
+  .cook-btn.loading .btn-label{ display:none; }
+
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  /* ---------- Result recipe card ---------- */
+  .recipe{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:32px;
+    position:relative;
+    display:none;
+  }
+
+  .recipe.visible{ display:block; animation: rise .35s ease; }
+
+  @keyframes rise{
+    from{ opacity:0; transform: translateY(10px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .recipe::before, .recipe::after{
+    content:"";
+    position:absolute;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--cream);
+    border:1px solid var(--line);
+    top:50%;
+    transform: translateY(-50%);
+  }
+  .recipe::before{ left:-10px; }
+  .recipe::after{ right:-10px; }
+
+  .recipe-head{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:4px;
+  }
+
+  .recipe-title{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.6rem;
+  }
+
+  .recipe-eyebrow{
+    color:var(--muted);
+    font-size:0.85rem;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    margin-bottom:18px;
+    border-bottom:1px dashed var(--line);
+    padding-bottom:18px;
+  }
+
+  .recipe-section{
+    margin-bottom:22px;
+  }
+
+  .recipe-section h3{
+    font-family:'Fraunces', serif;
+    font-size:1.05rem;
+    font-weight:600;
+    margin:0 0 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .swatches{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  .swatch{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:5px 12px 5px 6px;
+    font-size:0.85rem;
+    font-weight:600;
+  }
+
+  .swatch-dot{
+    width:20px; height:20px;
+    border-radius:50%;
+    border:1px solid rgba(0,0,0,0.08);
+    flex-shrink:0;
+  }
+
+  .recipe-section p{
+    margin:0;
+    line-height:1.6;
+    font-size:0.95rem;
+  }
+
+  .recipe-section ul{
+    margin:0;
+    padding-left:1.2em;
+    line-height:1.6;
+    font-size:0.95rem;
+  }
+
+  .prompt-box{
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px;
+    font-size:0.92rem;
+    line-height:1.6;
+    font-family:'Karla', sans-serif;
+    white-space:pre-wrap;
+    position:relative;
+  }
+
+  .copy-btn{
+    position:absolute;
+    top:10px; right:10px;
+    background:var(--basil);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:6px 12px;
+    font-size:0.78rem;
+    font-weight:700;
+    font-family:'Karla', sans-serif;
+    cursor:pointer;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+  }
+
+  .copy-btn:hover{ background:#3F4E32; }
+
+  .error-box{
+    background:#FBEFE9;
+    border:1px solid var(--tomato);
+    border-radius:12px;
+    padding:14px 16px;
+    color:var(--tomato-dark);
+    font-size:0.9rem;
+    font-weight:500;
+    display:none;
+  }
+
+  .error-box.visible{ display:block; }
+
+  .loading-msg{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.95rem;
+    font-style:italic;
+    display:none;
+  }
+
+  .loading-msg.visible{ display:block; }
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.82rem;
+    margin-top:40px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="badge">G&amp;P</div>
+    <h1>greg<span>n</span>pasta</h1>
+    <p class="tagline">drop in a look, drop in a subject — get the recipe to remake one in the other's style</p>
+  </header>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="step-label">
+        <span class="step-num">01</span>
+        <span class="step-title">The style</span>
+      </div>
+      <p class="step-sub">Donor of traits only: colors, accessories, materials, patterns — its form won't be used.</p>
+      <label class="dropzone" id="dz-style" for="file-style">
+        <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5-4 4-3-3-6 6"/></svg>
+        <div class="dz-text"><strong>Click to upload</strong> or drag an image here</div>
+        <input type="file" id="file-style" accept="image/*">
+        <button class="dz-remove" type="button" title="Remove" style="display:none;">&times;</button>
+      </label>
+    </div>
+
+    <div class="card">
+      <div class="step-label">
+        <span class="step-num">02</span>
+        <span class="step-title">The subject</span>
+      </div>
+      <p class="step-sub">The locked anchor — its form, pose, and structure stay exactly as-is.</p>
+      <label class="dropzone" id="dz-subject" for="file-subject">
+        <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5-4 4-3-3-6 6"/></svg>
+        <div class="dz-text"><strong>Click to upload</strong> or drag an image here</div>
+        <input type="file" id="file-subject" accept="image/*">
+        <button class="dz-remove" type="button" title="Remove" style="display:none;">&times;</button>
+      </label>
+    </div>
+
+  </div>
+
+  <div class="action-row">
+    <button class="cook-btn" id="cook-btn">
+      <span class="btn-label">Cook up the recipe</span>
+      <span class="spinner"></span>
+    </button>
+  </div>
+
+  <p class="loading-msg" id="loading-msg">simmering your style transfer recipe…</p>
+  <div class="error-box" id="error-box"></div>
+
+  <div class="recipe" id="recipe">
+    <p class="recipe-eyebrow">03 — The recipe</p>
+    <div class="recipe-head">
+      <span class="recipe-title" id="recipe-title">Result</span>
+    </div>
+
+    <div class="recipe-section">
+      <h3>🔒 Locked form (unchanged)</h3>
+      <p id="recipe-locked"></p>
+    </div>
+
+    <div class="recipe-section">
+      <h3>✨ Borrowed traits</h3>
+      <ul id="recipe-traits"></ul>
+    </div>
+
+    <div class="recipe-section">
+      <h3>🎨 Palette to apply</h3>
+      <div class="swatches" id="recipe-palette"></div>
+    </div>
+
+    <div class="recipe-section">
+      <h3>✒️ Typography &amp; materials</h3>
+      <p id="recipe-type"></p>
+    </div>
+
+    <div class="recipe-section">
+      <h3>🧩 Composition</h3>
+      <ul id="recipe-composition"></ul>
+    </div>
+
+    <div class="recipe-section">
+      <h3>🌗 Mood</h3>
+      <p id="recipe-mood"></p>
+    </div>
+
+    <div class="recipe-section">
+      <h3>📋 Full prompt — paste into your image generator</h3>
+      <div class="prompt-box">
+        <button class="copy-btn" id="copy-btn">Copy</button>
+        <span id="recipe-prompt"></span>
+      </div>
+    </div>
+  </div>
+
+  <footer>gregnpasta · style transfer recipes, served fresh</footer>
+</div>
+
+<script>
+  const state = { style: null, subject: null };
+
+  function setupDropzone(id, key){
+    const dz = document.getElementById(id);
+    const input = dz.querySelector('input[type=file]');
+    const removeBtn = dz.querySelector('.dz-remove');
+
+    function showImage(dataUrl){
+      dz.classList.add('has-image');
+      let img = dz.querySelector('img');
+      if(!img){
+        img = document.createElement('img');
+        dz.insertBefore(img, dz.firstChild);
+      }
+      img.src = dataUrl;
+      dz.querySelector('.dz-icon').style.display = 'none';
+      dz.querySelector('.dz-text').style.display = 'none';
+      removeBtn.style.display = 'flex';
+    }
+
+    function clearImage(){
+      state[key] = null;
+      dz.classList.remove('has-image');
+      const img = dz.querySelector('img');
+      if(img) img.remove();
+      dz.querySelector('.dz-icon').style.display = '';
+      dz.querySelector('.dz-text').style.display = '';
+      removeBtn.style.display = 'none';
+      input.value = '';
+    }
+
+    function handleFile(file){
+      if(!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const dataUrl = e.target.result;
+        const [, meta, b64] = dataUrl.match(/^data:(.+);base64,(.*)$/);
+        state[key] = { dataUrl, mediaType: meta, base64: b64 };
+        showImage(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    input.addEventListener('change', e => handleFile(e.target.files[0]));
+
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('drag');
+      handleFile(e.dataTransfer.files[0]);
+    });
+
+    removeBtn.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      clearImage();
+    });
+  }
+
+  setupDropzone('dz-style', 'style');
+  setupDropzone('dz-subject', 'subject');
+
+  const cookBtn = document.getElementById('cook-btn');
+  const loadingMsg = document.getElementById('loading-msg');
+  const errorBox = document.getElementById('error-box');
+  const recipe = document.getElementById('recipe');
+
+  cookBtn.addEventListener('click', async () => {
+    errorBox.classList.remove('visible');
+    recipe.classList.remove('visible');
+
+    if(!state.style || !state.subject){
+      errorBox.textContent = 'Add both an image for "the style" and "the subject" before cooking.';
+      errorBox.classList.add('visible');
+      return;
+    }
+
+    cookBtn.classList.add('loading');
+    cookBtn.disabled = true;
+    loadingMsg.classList.add('visible');
+
+    try{
+      const response = await fetch("/api/recipe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          style: { base64: state.style.base64, mediaType: state.style.mediaType },
+          subject: { base64: state.subject.base64, mediaType: state.subject.mediaType }
+        })
+      });
+
+      const data = await response.json();
+
+      if(!response.ok){
+        throw new Error(data.error || ("Request failed with status " + response.status));
+      }
+
+      renderRecipe(data);
+    } catch(err){
+      console.error(err);
+      errorBox.textContent = "Something went wrong cooking your recipe: " + err.message;
+      errorBox.classList.add('visible');
+    } finally {
+      cookBtn.classList.remove('loading');
+      cookBtn.disabled = false;
+      loadingMsg.classList.remove('visible');
+    }
+  });
+
+  function renderRecipe(r){
+    document.getElementById('recipe-title').textContent = r.title || 'Result';
+
+    document.getElementById('recipe-locked').textContent = r.locked_form || '';
+
+    const traitsEl = document.getElementById('recipe-traits');
+    traitsEl.innerHTML = '';
+    (r.borrowed_traits || []).forEach(trait => {
+      const li = document.createElement('li');
+      li.textContent = trait;
+      traitsEl.appendChild(li);
+    });
+
+    const paletteEl = document.getElementById('recipe-palette');
+    paletteEl.innerHTML = '';
+    (r.palette || []).forEach(c => {
+      const sw = document.createElement('div');
+      sw.className = 'swatch';
+      sw.innerHTML = `<span class="swatch-dot" style="background:${c.hex}"></span>${c.name} · ${c.hex}`;
+      paletteEl.appendChild(sw);
+    });
+
+    document.getElementById('recipe-type').textContent = r.typography_materials || '';
+
+    const compEl = document.getElementById('recipe-composition');
+    compEl.innerHTML = '';
+    (r.composition || []).forEach(step => {
+      const li = document.createElement('li');
+      li.textContent = step;
+      compEl.appendChild(li);
+    });
+
+    document.getElementById('recipe-mood').textContent = r.mood || '';
+    document.getElementById('recipe-prompt').textContent = r.full_prompt || '';
+
+    recipe.classList.add('visible');
+    recipe.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.getElementById('copy-btn').addEventListener('click', () => {
+    const text = document.getElementById('recipe-prompt').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = old, 1500);
+    });
+  });
+</script>
+</body>
+</html>
